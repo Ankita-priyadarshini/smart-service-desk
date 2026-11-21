@@ -1,4 +1,5 @@
-from domain.exceptions import (InvalidPriorityError, RequestAlreadyResolvedError)
+import re
+from domain.exceptions import (InvalidPriorityError, RequestAlreadyResolvedError, InvalidRequestIDError)
 
 class ServiceRequest:
     # Represents an IT support request raised by an user/employee.
@@ -15,12 +16,30 @@ class ServiceRequest:
     VALID_STATUSES = {"OPEN", "RESOLVED"}
     
     def __init__(self, request_id, employee_name, issue, priority):
-        self.request_id = self._validate_text(request_id, "Request ID")
+        self.request_id = self._validate_request_id(request_id)
         self.employee_name = self._validate_text(employee_name, "Employee name")
         self.issue = self._validate_text(issue, "Issue description")
         self.priority = self._validate_priority(priority)
         self._status = "OPEN"
         
+        
+    @staticmethod
+    def _validate_request_id(request_id):
+        # Validate and normalise request IDs to the SR### format.
+        if not isinstance(request_id, str):
+            raise InvalidRequestIDError(
+                "Request ID must follow the format SR followed by 3 digits."
+            )
+        
+        request_id = request_id.strip().upper()
+        
+        if not re.fullmatch(r"SR\d{3}", request_id):
+            raise InvalidRequestIDError(
+                "Invalid Request ID. Use the format SR followed by 3 digits (e.g. SR999)."
+            )
+            
+        return request_id
+    
     @staticmethod
     def _validate_text(value, field_name):
         # Validate that a required text field is not empty.

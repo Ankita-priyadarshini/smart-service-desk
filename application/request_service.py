@@ -12,14 +12,9 @@ class RequestService:
         self.repository = repository
         self.requests = self.repository.load_requests()
 
-    def create_request(
-        self,
-        request_id,
-        employee_name,
-        issue,
-        priority
-    ):
+    def create_request(self, request_id, employee_name, issue, priority):
         # Create and persist a new service request.
+        request_id = ServiceRequest._validate_request_id(request_id)
 
         if any(
             request.request_id == request_id
@@ -47,6 +42,7 @@ class RequestService:
 
     def search_request(self, request_id):
         # Find a request using its ID.
+        request_id = ServiceRequest._validate_request_id(request_id)
 
         for request in self.requests:
             if request.request_id == request_id:

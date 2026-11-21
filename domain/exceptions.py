@@ -15,3 +15,8 @@ class RequestAlreadyResolvedError(ServiceDeskError):
     
 class RepositoryError(ServiceDeskError):
     """Raised when an error occurs during data storage operations."""
+    
+    
+# ----------- Extension of the assignment given ---------------
+class InvalidRequestIDError(ServiceDeskError):
+    """Raised when a request ID does not follow the required format."""
