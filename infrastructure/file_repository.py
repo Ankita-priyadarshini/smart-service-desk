@@ -20,7 +20,12 @@ class FileRepository:
 
         try:
             with self.file_path.open("r", encoding="utf-8") as file:
-                data = json.load(file)
+                content = file.read()
+                
+            if not content.strip():
+                return []
+            
+            data = json.loads(content)
 
             if not isinstance(data, list):
                 raise RepositoryError(
